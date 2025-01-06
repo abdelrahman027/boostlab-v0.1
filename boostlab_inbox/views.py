@@ -1,7 +1,12 @@
 
+from django.http import HttpResponse
 from django.shortcuts import render , get_object_or_404
 from django.contrib.auth.decorators import login_required
+
+from boostlab_employees.models import Employee
 from .models import Conversation
+from django.contrib.auth.models import User
+from django.db.models import Q
 
 # Create your views here.
 @login_required
@@ -17,3 +22,63 @@ def inbox_view(request, conversation_id=None):
     }
     
     return render(request, 'boostlab_inbox/inbox.html', context=context)
+
+
+def search_users(request):
+    if request.htmx:
+        letters = request.GET.get('search_user')
+        if len(letters) > 0:
+            employees = Employee.objects.filter(name__icontains=letters)
+            users_id = employees.values_list('user', flat=True)
+            users = User.objects.filter(
+                Q(username__icontains=letters) | Q(id__in=users_id)
+            ).exclude(username=request.user.username)
+            return render(request, 'boostlab_inbox/list_searchuser.html', { 'users' : users })
+        else:
+            return HttpResponse('')
+    else:
+        raise Http404()
+    
+    
+    
+    
+@login_required     
+def new_message(request, recipient_id):
+    recipient = get_object_or_404( User, id=recipient_id)
+    new_message_form = InboxNewMessageForm()
+    
+    if request.method == 'POST':
+        form = InboxNewMessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+
+            # encrypt message
+            # message_original = form.cleaned_data['body']
+            # message_bytes = message_original.encode('utf-8')
+            # message_encrypted = f.encrypt(message_bytes)
+            # message_decoded = message_encrypted.decode('utf-8')
+            # message.body = message_decoded
+            
+            message.sender = request.user
+            
+            my_conversations = request.user.conversations.all()
+            for c in my_conversations:
+                if recipient in c.participants.all():
+                    message.conversation = c
+                    message.save()
+                    c.lastmessage_created = timezone.now()
+                    c.is_seen = False
+                    c.save()
+                    return redirect('inbox', c.id)
+            new_conversation = Conversation.objects.create()
+            new_conversation.participants.add(request.user, recipient)
+            new_conversation.save()
+            message.conversation = new_conversation
+            message.save() 
+            return redirect('inbox', new_conversation.id)
+    
+    context = {
+        'recipient': recipient,
+        'new_message_form': new_message_form
+    }
+    return render(request, 'a_inbox/form_newmessage.html', context)
