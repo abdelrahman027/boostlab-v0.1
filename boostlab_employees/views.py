@@ -6,7 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
+from boostlab_inbox.views import new_message
 from boostlab_posts.forms import ReplyCreateForm
+from boostlab_inbox.forms import InboxNewMessageForm
 
 
 from .forms import *
@@ -34,9 +36,11 @@ def profile_view(request,username=None):
         elif 'liked-posts' in request.GET:
             posts =logged_employee.user.likedposts.order_by('-likedpost__created')
         return render(request,'snippets/loop_profile_posts.html',{'posts':posts})
+    new_message_form = InboxNewMessageForm()
     context = {
         'logged_employee': logged_employee,
-        'posts': posts
+        'posts': posts,
+        'new_message_form': new_message_form
     }
     return render(request, 'boostlab_employees/profile.html', context=context)
 

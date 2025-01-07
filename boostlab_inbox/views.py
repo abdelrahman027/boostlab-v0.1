@@ -115,4 +115,4 @@ def new_reply(request, conversation_id):
         'new_message_form': new_message_form,
         'conversation' : conversation
     }
-    return render(request, 'a_inbox/form_newreply.html', context)
+    return render(request, 'boostlab_inbox/form_newreply.html', context)
