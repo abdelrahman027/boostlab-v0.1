@@ -1,9 +1,10 @@
 
 from django.http import HttpResponse
-from django.shortcuts import render , get_object_or_404
+from django.shortcuts import render , get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
-
+from django.utils import timezone
 from boostlab_employees.models import Employee
+from boostlab_inbox.forms import InboxNewMessageForm
 from .models import Conversation
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -52,12 +53,12 @@ def new_message(request, recipient_id):
         if form.is_valid():
             message = form.save(commit=False)
 
-            # encrypt message
-            # message_original = form.cleaned_data['body']
-            # message_bytes = message_original.encode('utf-8')
-            # message_encrypted = f.encrypt(message_bytes)
-            # message_decoded = message_encrypted.decode('utf-8')
-            # message.body = message_decoded
+    #         # encrypt message
+    #         # message_original = form.cleaned_data['body']
+    #         # message_bytes = message_original.encode('utf-8')
+    #         # message_encrypted = f.encrypt(message_bytes)
+    #         # message_decoded = message_encrypted.decode('utf-8')
+    #         # message.body = message_decoded
             
             message.sender = request.user
             
@@ -81,4 +82,37 @@ def new_message(request, recipient_id):
         'recipient': recipient,
         'new_message_form': new_message_form
     }
-    return render(request, 'a_inbox/form_newmessage.html', context)
+    return render(request, 'boostlab_inbox/form_newmessage.html', context)
+
+
+@login_required
+def new_reply(request, conversation_id):
+    new_message_form = InboxNewMessageForm()
+    my_conversations = request.user.conversations.all()
+    conversation = get_object_or_404(my_conversations, id=conversation_id)
+    
+    if request.method == 'POST':
+        form = InboxNewMessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+
+            # encrypt message
+            # message_original = form.cleaned_data['body']
+            # message_bytes = message_original.encode('utf-8')
+            # message_encrypted = f.encrypt(message_bytes)
+            # message_decoded = message_encrypted.decode('utf-8')
+            # message.body = message_decoded
+            
+            message.sender = request.user
+            message.conversation = conversation
+            message.save()
+            conversation.lastmessage_created = timezone.now()
+            conversation.is_seen = False
+            conversation.save()
+            return redirect('inbox', conversation.id)
+    
+    context = {
+        'new_message_form': new_message_form,
+        'conversation' : conversation
+    }
+    return render(request, 'a_inbox/form_newreply.html', context)

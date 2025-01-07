@@ -2,7 +2,7 @@
     {% for user in users  %}
     
     <li>
-        <a href="" class="flex items-center gap-1 hover:bg-zinc-100 p-2 rounded-lg cursor-pointer"
+        <a hx-get="{% url 'inbox-newmessage' user.id %}" hx-target="#new-message" hx-swap="innerHTML" class="flex items-center gap-1 hover:bg-zinc-100 p-2 rounded-lg cursor-pointer"
         >
             <img class="w-10 h-10 object-cover rounded-full mr-1" src="{{user.employee.avatar}}">
             <div class="font-bold">{{user.employee.real_name}} <span class="text-zinc-500 text-xs font-normal">@{{user.username}}</span></div>
