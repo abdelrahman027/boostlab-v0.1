@@ -54,6 +54,7 @@ def post_create_view(request):
             return redirect('home')
     context={'form': form}
     return render(request, 'boostlab_posts/post_create.html', context=context)
+
 @login_required
 def post_delete_view(request,pk):
     post = get_object_or_404(Post, id=pk, author=request.user)

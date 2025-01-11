@@ -1,0 +1,46 @@
+
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+
+
+    {% for task in  request.user.employee.manager.assigned_tasks.all  %}
+   
+   <div class="card !p-8">
+       <div class="flex justify-end pb-4 items-center justify-between gap-4">
+   
+           <span href="" class="text-xs text-gray-500">
+               {% if task.completed %}
+               <div class="text-green-500">
+                   Completed
+               </div>
+               {% else %}
+               <div class="text-amber-500">
+                   Pending
+               </div>
+               {% endif %}
+           </span>
+           <a href="{% url "userprofile" task.manager.employee.user.username %}" class="text-xs text-gray-500 flex items-center gap-1 hover:underline">
+            <img  class="w-6 h-6 object-cover rounded-full" src="{{task.manager.employee.avatar}}"/>
+            <span>@{{task.manager.employee.user.username}} </span>
+        </a>
+           <a href="{% url "task-detail" task.id %}" class="hover:underline text-xs text-gray-500">view</a>
+       </div>
+       {% comment %} <div class="flex items-center mb-6">
+           <img class="h-5 object-cover mr-1" src="https://img.icons8.com/small/96/333333/search--v1.png"/>
+           <a href="https://www.flickr.com/explore" target="_blank" class="hover:underline text-gray-500">Find an image on Flickr</a>
+       </div> {% endcomment %}
+       <div>
+           <h3>{{task.title}}</h3>
+           <p class="text-sm text-gray-500 line-clamp-2">{{task.description}}</p>
+       </div>
+       <div class="flex items-center justify-center relative border-t-2 border-slate-200 pt-2">
+           {% include "boostlab_tasks/employee_avatar_snippet.html" %}
+   
+       </div>
+   
+   
+   </div>
+   
+   {% endfor %}
+   
+   </div>

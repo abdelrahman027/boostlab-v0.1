@@ -1,0 +1,43 @@
+{% extends "layouts/e.html" %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+
+    <h1 class="mb-6">{{request.user.employee.real_name}} Tasks <span class="text-sm text-gray-500">@{{request.user.username}}</span></h1>
+
+    {% if request.user.employee.manager %}
+    <button>
+        <a href="{% url 'create-task' %}" class="btn btn-primary">New Task</a>
+    </button>
+    {% endif %}
+</div>
+
+    <div id="tabs" class="ml-4 flex gap-1 mb-4 {% if not user.tasks.all %}hidden{% endif %}" hx-target="#task-contents" hx-swap="innerHTML"_="on htmx:afterOnLoad take .selected for event.target" >
+        <a hx-get="?" class="tab selected">Card View</a> 
+        <a hx-get="?table" class="tab">Table View</a>
+    </div>
+
+
+    <div id="tabs" class="ml-4 flex gap-1 mb-4 {% if not request.user.employee.manager.assigned_tasks.all %}hidden{% endif %}" hx-target="#task-contents" hx-swap="innerHTML"_="on htmx:afterOnLoad take .selected for event.target" >
+        <a hx-get="?manger_grid" class="tab selected">Card View</a> 
+        <a hx-get="?manger_table" class="tab">Table View</a>
+    </div>
+
+<div id="task-contents">
+    {% comment %} {% include "boostlab_tasks/tasks_snippet_grid.html" %} {% endcomment %}
+     {% if request.user.employee.manager %} 
+        {% include "boostlab_tasks/manager_task_grid.html" %}
+
+     {% else %}
+      
+     {% if user.tasks.all  %}
+      {% include "boostlab_tasks/tasks_snippet_grid.html" %}
+      {% else %}
+ 
+ <p>You don't have any tasks :D</p>
+    {% endif %}
+     {% endif %}
+</div>
+
+
+{% endblock content %}

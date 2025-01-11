@@ -1,0 +1,116 @@
+{% extends "layouts/b.html" %}
+
+{% block content %}
+
+<div class="flex items-center justify-between mb-6 ">
+    <h1 class="text-sm mb-0  font-bold">{{task.title}}</h1>
+    
+    <a href="{% url "userprofile" task.manager.employee.user.username %}" class="text-xs text-gray-500 flex items-center gap-1 hover:underline">
+        <span>Manager:</span>
+        <img  class="w-6 h-6 object-cover rounded-full" src="{{task.manager.employee.avatar}}"/>
+        <span>@{{task.manager.employee.user.username}} </span>
+    </a>
+<div class="flex items-center gap-2">
+
+    {% comment %} <div id="tabs" class="ml-4 flex gap-1 mb-4 {% if not user.tasks.all %}hidden{% endif %}" hx-target="#task-contents" hx-swap="innerHTML"_="on htmx:afterOnLoad take .selected for event.target" >
+        <a hx-get="" class="tab ">Add Activity</a> 
+        <a hx-get="?table" class="tab">upload File</a>
+    </div> {% endcomment %}
+    {% if request.user == task.manager.employee.user %}
+    <div class="flex items-center gap-2">
+    <button class="bg-red-500 ml-2 hover:bg-red-600">
+        <a href="{% url 'delete-task' task.id %}" >
+            Delete Task
+    
+        </a>
+    </button>
+
+    <button class="bg-green-500 ml-2 hover:bg-green-600">
+        <a href="{% url 'edit-task' task.id %}" >
+            Edit Task
+    
+        </a>
+    </button>
+</div>
+    {% endif %}
+</div>
+</div>
+<div  class="card !p-8">
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center text-sm gap-2">
+        <img width="26" height="26" src="https://img.icons8.com/ios/50/333333/important-time.png" alt="important-time"/>
+        <span class="hover:underline text-gray-500 ml-1">{{task.due_date}}</span>
+        <sup class="text-xs text-gray-300">deadline</sup>
+        </div>
+        <div>
+            {% if task.completed %}
+            <span class="text-green-500">Completed</span>
+            {% else %}
+            <span class="text-amber-500">Pending</span>
+            {% endif %}
+        </div>
+        <div class="flex items-center text-sm gap-2">
+            <img width="26" height="26" src="https://img.icons8.com/ios/50//333333/calendar--v1.png" alt="calendar--v1"/>
+        <span class="hover:underline text-gray-500 ml-1">{{task.created}}</span>
+        <sup class="text-xs text-gray-300">created at</sup>
+        </div>
+    </div>
+    <p>{{task.description}}</p>
+
+
+    <div> 
+
+        <h3  class="flex items-center justify-between">Activity / Error Log:
+            <div class="flex items-center">
+             <span class="text-sm text-gray-500">{{task.activities.all.count}} activities </span>
+             <a href="{% url 'create-activity' task.id %}" class="ml-2"> 
+                <img width="24" height="24" src="https://img.icons8.com/color/48/add--v1.png" alt="add--v1"/>
+             </a>
+            </div>
+        </h3>
+
+
+        <div class="flex items-center relative border-t-2 border-slate-200 pt-2">
+            {% if not task.activities.all %}
+            <p>no activities yet</p>
+            {% else %}
+            <ul class="w-full py-4">
+            {% for activity in task.activities.all %}
+                {% include "boostlab_tasks/activity_snippet.html" %}
+            {% endfor %}
+            </ul>   
+            {% endif %}
+        </div>
+
+        <h3 class="flex items-center justify-between">Attached Files:
+            <div class="flex items-center">
+             <span class="text-sm text-gray-500">{{task.files.count}} files </span>
+             <a href="{% url 'create-file' task.id %}" class="ml-2"> 
+                <img width="24" height="24" src="https://img.icons8.com/color/48/add--v1.png" alt="add--v1"/>
+             </a>
+            </div>
+         </h3>                      
+        <div class="flex items-center relative border-t-2 border-slate-200 pt-2">
+            {% if not task.files.all %}
+            <p>no files yet</p>
+            {% else %}
+            <ul class="w-full py-4 flex flex-col gap-4">
+            {% for file in task.files.all %}
+                {% include "boostlab_tasks/file_snippet.html" %}
+            {% endfor %}
+            </ul>   
+            {% endif %}
+        </div>
+
+        <h3>Task Team:</h3>
+        <div class="flex items-center relative border-t-2 border-slate-200 pt-2">
+            {% include "boostlab_tasks/employee_avatar_snippet.html" %}
+        </div>
+    </div>
+    {% comment %} <div class="flex items-center mb-6">
+        <img class="h-5 object-cover mr-1" src="https://img.icons8.com/small/96/333333/search--v1.png"/>
+        <a href="https://www.flickr.com/explore" target="_blank" class="hover:underline text-gray-500">Find an image on Flickr</a>
+    </div> {% endcomment %}
+
+</div>
+{% endblock content %}

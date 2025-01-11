@@ -1,0 +1,34 @@
+<li class="flex items-center justify-between   gap-2 w-full"> 
+    <div class="flex items-center justify-center gap-2">
+        {% comment %} <img width="30" height="30" src="https://img.icons8.com/fluency/48/image-file.png" alt="image-file"/> {% endcomment %}
+        <div class="flex items-center justify-center flex-col gap-2 cursor-pointer">
+            <p class="truncate-1-lines  items-center text-sm flex gap-1">
+
+             <img class="w-6 h-6 object-cover rounded-full" src="{{file.added_by.employee.avatar}}">
+             <a href ="{% url 'userprofile' file.added_by.username %}" class="text-xs text-gray-500 hover:underline">@{{file.added_by.username}}</a>
+
+        <span class="text-xs text-gray-500">: {{file.description}}</span>
+         </p>
+        </div>
+
+    </div>
+            <a href="{{file.file.url}}">
+                {% if  'pdf' in file.file.name %}
+                <a href="{{file.file.url}}" target="_blank" class="text-xs text-green-500 hover:underline cursor-pointer">view PDF</a>
+                {% else %}
+                <img class="w-12 h-12 object-cover rounded-md hover:w-40 top-0 left-0 hover:h-40 transition-all duration-300" src="{{file.file.url}}">
+                {% endif %}
+            </a>
+            <span class="text-xs text-gray-300">
+                {{file.uploaded_at|timesince}} ago
+           </span>
+            {% if file.task.manager.employee.user.id == request.user.id or file.added_by.id == request.user.id %}
+            <a href="{% url 'delete-file' file.id %}" class="text-xs text-gray-500 hover:underline hover:scale-125 transition-all duration-300">
+                <img width="20" height="20" src="https://img.icons8.com/fluency/48/delete-forever.png" alt="delete-forever"/>
+            </a>
+            {% endif %}
+
+
+            
+
+</li>

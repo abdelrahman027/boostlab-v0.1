@@ -5,7 +5,7 @@ from django import forms
 class profileForm(forms.ModelForm):
     class Meta:
         model = Employee
-        exclude = ['user']
+        exclude = ['user','department']
         widgets = {
             'image': forms.FileInput(),
             'bio': forms.Textarea(attrs={"rows": 3}),

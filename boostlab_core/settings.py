@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'boostlab_posts',
     'boostlab_employees',
     'boostlab_inbox',
+    'boostlab_tasks',
 ]
 
 

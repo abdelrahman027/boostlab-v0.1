@@ -1,0 +1,67 @@
+
+ 
+    <div class="mt-12 shadow-lg  " >
+        <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
+            <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="py-3 px-6">Task title</th>
+                    <th scope="col" class="py-3 px-6">Assigned by</th>
+                    <th scope="col" class="py-3 px-6">DeadLine</th>
+                    <th scope="col" class="py-3 px-6">Assigned to</th>
+                    <th scope="col" class="py-3 px-6">Actions</th>
+
+                </tr>
+                </thead>
+                <tbody id="table_body">
+                    {% for task in user.tasks.all %}
+                      
+                    
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td class="py-4 px-6">
+                        <div>{{task.title}}</div>
+                        <p class="truncate text-xs !text-gray-400">{{task.description}}</p>
+                    </td>
+                    <td class="py-4 px-6">           <a href="{% url "userprofile" task.manager.employee.user.username %}" class="text-xs text-gray-500 flex items-center gap-1 hover:underline">
+                        <img  class="w-6 h-6 object-cover rounded-full" src="{{task.manager.employee.avatar}}"/>
+                        <span>@{{task.manager.employee.user.username}} </span>
+                    </a></td>
+                    <td class="py-4 px-6">{{task.due_date}}</td>
+                    <td class="py-4 px-6 flex relative">
+                        {% include "boostlab_tasks/employee_avatar_snippet.html" %}
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex justify-end pb-4 items-center justify-center gap-4">
+
+                            <span href="" class="text-xs text-gray-500">
+                                {% if task.completed %}
+                                <div class="text-green-500">
+                                    Completed
+                                </div>
+                                {% else %}
+                                <div class="text-amber-500">
+                                    Pending
+                                </div>
+                                {% endif %}
+                            </span>
+                            <a href="{% url "task-detail" task.id %}" class="hover:underline text-xs text-gray-500">view</a>
+                        </div>
+
+                    </td>
+                
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+    </div>
+    
+</div>
+    
+
+    
+<script>
+    console.log("{{user.tasks.all.first.manager}}");
+</script>

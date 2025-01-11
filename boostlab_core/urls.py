@@ -22,6 +22,7 @@ from boostlab_posts.views import *
 from boostlab_employees.views import *
 from django.conf.urls.static import static
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
@@ -35,7 +36,12 @@ urlpatterns = [
     path("comment/like/<pk>/",like_comment,name="like-comment"),
     path("reply/like/<pk>/",like_reply,name="like-reply"),
     
+    #inbox urls
     path('inbox/',include('boostlab_inbox.urls')),
+    
+    #tasks urls
+    path('tasks/',include('boostlab_tasks.urls')),
+
     
     path('category/<tag>/',home_view,name="category"),
     path('profile/',profile_view,name="profile"),

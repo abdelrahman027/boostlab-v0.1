@@ -1,0 +1,13 @@
+{% for employee in task.assigned_to.all %}
+<div class="mr-1 group ">
+    <img class="w-10 h-10 object-cover rounded-full border-2 border-slate-500" src="{{employee.employee.avatar}}">
+    <div class="absolute hidden group-hover:block -top-8 left-0 p-2 rounded-md z-50 bg-slate-600 text-white">
+        <div class="flex flex-col gap-1">
+            <a href="{% url 'userprofile' employee.username %}" class="flex items-center gap-1">    
+                <span class="font-bold hover:underline">visit</span>
+            </a>        
+            <span class="text-xs">{{employee.email}}</span>
+        </div>
+    </div>
+</div>
+{% endfor %}
